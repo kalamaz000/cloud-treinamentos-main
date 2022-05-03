@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v2
+     
+      - uses: azure/docker-login@v1
+        with:
+          login-server: acrcomunidadecloud.azurecr.io/mycontainer
+          username: ${{ secrets.DOCKERACR_USERNAME }}
+          password: ${{ secrets.DOCKERACR_TOKEN }}
+          
+      - run: |
+          docker build -t acrcomunidadecloud.azurecr.io/mycontainer:${{github.run_number}} .
+          docker push acrcomunidadecloud.azurecr.io/mycontainer:${{github.run_number}}
